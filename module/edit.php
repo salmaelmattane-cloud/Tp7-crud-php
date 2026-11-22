@@ -2,19 +2,19 @@
 <?php
 require_once "../database/connexion.php";
 
-// a. Récupérer l'identifiant
+// Récupérer l'identifiant
 $id = (int) ($_GET["id"] ?? 0);
 
 if ($id <= 0) {
     die("Identifiant invalide.");
 }
 
-// Charger les formations pour la liste déroulante
+// Charger les formations
 $sql = "SELECT * FROM formation";
 $stmt = $pdo->query($sql);
 $formations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// b. Charger les données du module
+// Charger les données du module
 $sql = "SELECT * FROM module WHERE id_module = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([":id" => $id]);
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = $_POST["description"];
     $id_formation = $_POST["id_formation"];
 
-    // d. Exécuter la requête UPDATE
+    // Modifier le module
     $sql = "UPDATE module
             SET nom_module = :nom,
                 description = :description,
@@ -48,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ":id" => $id
     ]);
 
-    // e. Rediriger vers la liste
     header("Location: index.php");
     exit;
 }
@@ -58,45 +57,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier un module</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
+<div class="form-container">
+
     <h1>Modifier un module</h1>
+
+    <p class="form-description">
+        Modifiez les informations de ce module.
+    </p>
 
     <form method="POST" action="edit.php?id=<?= $id ?>">
 
-        <label>Nom du module :</label>
-        <input type="text" name="nom_module"
-               value="<?= htmlspecialchars($module['nom_module']) ?>"
-               required>
+        <div class="form-group">
+            <label>Nom du module :</label>
+            <input type="text" name="nom_module"
+                value="<?= htmlspecialchars($module['nom_module']) ?>"
+                required>
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Description :</label>
+            <textarea name="description"><?= htmlspecialchars($module['description'] ?? '') ?></textarea>
+        </div>
 
-        <label>Description :</label>
-        <textarea name="description"><?= htmlspecialchars($module['description'] ?? '') ?></textarea>
+        <div class="form-group">
+            <label>Formation :</label>
 
-        <br><br>
+            <select name="id_formation" required>
+                <?php foreach ($formations as $formation): ?>
+                    <option value="<?= $formation['id_formation'] ?>"
+                        <?= ($formation['id_formation'] == $module['id_formation']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($formation['nom_formation']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-        <label>Formation :</label>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                Enregistrer les modifications
+            </button>
 
-        <select name="id_formation" required>
-            <?php foreach ($formations as $formation): ?>
-                <option value="<?= $formation['id_formation'] ?>"
-                    <?= ($formation['id_formation'] == $module['id_formation']) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($formation['nom_formation']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <br><br>
-
-        <button type="submit">Modifier</button>
+            <a href="index.php" class="btn-cancel">
+                Annuler
+            </a>
+        </div>
 
     </form>
 
-    <br>
-    <a href="index.php">Retour à la liste</a>
+</div>
 
 </body>
 </html>
+

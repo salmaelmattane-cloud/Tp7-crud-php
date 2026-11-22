@@ -30,41 +30,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ?>
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Ajouter une formation</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
+<div class="form-container">
+
     <h1>Ajouter une formation</h1>
+    <p class="form-description">
+        Remplissez les informations de la nouvelle formation.
+    </p>
 
     <form method="POST">
 
-        <label>Nom de la formation :</label>
-        <input type="text" name="nom_formation" required>
+        <div class="form-group">
+            <label>Nom de la formation</label>
+            <input type="text" name="nom_formation"
+                   placeholder="Ex : Développement Web" required>
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description"
+                      placeholder="Décrivez la formation..."></textarea>
+        </div>
 
-        <label>Description :</label>
-        <textarea name="description"></textarea>
+        <div class="form-group">
+            <label>Durée (mois)</label>
+            <input type="number" name="duree"
+                   min="1" placeholder="Ex : 12" required>
+        </div>
 
-        <br><br>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                Ajouter la formation
+            </button>
 
-        <label>Durée (mois) :</label>
-        <input type="number" name="duree" min="1" required>
-
-        <br><br>
-
-        <button type="submit">Ajouter</button>
+            <a href="index.php" class="btn-cancel">Annuler</a>
+        </div>
 
     </form>
 
-    <br>
-
-    <a href="index.php">Retour à la liste</a>
+</div>
 
 </body>
 </html>
-

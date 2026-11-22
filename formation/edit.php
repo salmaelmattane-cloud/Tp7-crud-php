@@ -1,15 +1,16 @@
 
+
 <?php
 require_once "../database/connexion.php";
 
-// a. Récupérer l'identifiant
+// Récupérer l'identifiant
 $id = (int) ($_GET["id"] ?? 0);
 
 if ($id <= 0) {
     die("Identifiant invalide.");
 }
 
-// b. Charger les données de la formation
+// Charger les données de la formation
 $sql = "SELECT * FROM formation WHERE id_formation = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([":id" => $id]);
@@ -27,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = $_POST["description"];
     $duree = $_POST["duree"];
 
-    // d. Exécuter la requête UPDATE
+    // Modifier la formation
     $sql = "UPDATE formation
             SET nom_formation = :nom,
                 description = :description,
@@ -43,7 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ":id" => $id
     ]);
 
-    // e. Rediriger vers la liste
     header("Location: index.php");
     exit;
 }
@@ -53,39 +53,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier une formation</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
+<div class="form-container">
+
     <h1>Modifier une formation</h1>
+
+    <p class="form-description">
+        Modifiez les informations de cette formation.
+    </p>
 
     <form method="POST" action="edit.php?id=<?= $id ?>">
 
-        <label>Nom de la formation :</label>
-        <input type="text" name="nom_formation"
-               value="<?= htmlspecialchars($formation['nom_formation']) ?>"
-               required>
+        <div class="form-group">
+            <label>Nom de la formation :</label>
+            <input type="text" name="nom_formation"
+                value="<?= htmlspecialchars($formation['nom_formation']) ?>"
+                required>
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Description :</label>
+            <textarea name="description"><?= htmlspecialchars($formation['description'] ?? '') ?></textarea>
+        </div>
 
-        <label>Description :</label>
-        <textarea name="description"><?= htmlspecialchars($formation['description'] ?? '') ?></textarea>
+        <div class="form-group">
+            <label>Durée (mois) :</label>
+            <input type="number" name="duree"
+                value="<?= htmlspecialchars($formation['duree'] ?? '') ?>"
+                min="1" required>
+        </div>
 
-        <br><br>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                Enregistrer les modifications
+            </button>
 
-        <label>Durée (mois) :</label>
-        <input type="number" name="duree"
-               value="<?= htmlspecialchars($formation['duree'] ?? '') ?>"
-               min="1" required>
-
-        <br><br>
-
-        <button type="submit">Modifier</button>
+            <a href="index.php" class="btn-cancel">
+                Annuler
+            </a>
+        </div>
 
     </form>
 
-    <br>
-    <a href="index.php">Retour à la liste</a>
+</div>
 
 </body>
 </html>

@@ -2,19 +2,19 @@
 <?php
 require_once "../database/connexion.php";
 
-// a. Récupérer l'identifiant
+// Récupérer l'identifiant
 $id = (int) ($_GET["id"] ?? 0);
 
 if ($id <= 0) {
     die("Identifiant invalide.");
 }
 
-// Charger les formations pour la liste déroulante
+// Charger les formations
 $sql = "SELECT * FROM formation";
 $stmt = $pdo->query($sql);
 $formations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// b. Charger les données de l'étudiant
+// Charger les données de l'étudiant
 $sql = "SELECT * FROM etudiant WHERE id_etudiant = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([":id" => $id]);
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $id_formation = $_POST["id_formation"];
 
-    // d. Exécuter la requête UPDATE
+    // Modifier l'étudiant
     $sql = "UPDATE etudiant
             SET nom = :nom,
                 prenom = :prenom,
@@ -51,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ":id" => $id
     ]);
 
-    // e. Rediriger vers la liste
     header("Location: index.php");
     exit;
 }
@@ -61,53 +60,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier un étudiant</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
+<div class="form-container">
+
     <h1>Modifier un étudiant</h1>
+
+    <p class="form-description">
+        Modifiez les informations de cet étudiant.
+    </p>
 
     <form method="POST" action="edit.php?id=<?= $id ?>">
 
-        <label>Nom :</label>
-        <input type="text" name="nom"
-               value="<?= htmlspecialchars($etudiant['nom']) ?>"
-               required>
+        <div class="form-group">
+            <label>Nom :</label>
+            <input type="text" name="nom"
+                value="<?= htmlspecialchars($etudiant['nom']) ?>"
+                required>
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Prénom :</label>
+            <input type="text" name="prenom"
+                value="<?= htmlspecialchars($etudiant['prenom']) ?>"
+                required>
+        </div>
 
-        <label>Prénom :</label>
-        <input type="text" name="prenom"
-               value="<?= htmlspecialchars($etudiant['prenom']) ?>"
-               required>
+        <div class="form-group">
+            <label>Email :</label>
+            <input type="email" name="email"
+                value="<?= htmlspecialchars($etudiant['email'] ?? '') ?>">
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Formation :</label>
 
-        <label>Email :</label>
-        <input type="email" name="email"
-               value="<?= htmlspecialchars($etudiant['email'] ?? '') ?>">
+            <select name="id_formation" required>
+                <?php foreach ($formations as $formation): ?>
+                    <option value="<?= $formation['id_formation'] ?>"
+                        <?= ($formation['id_formation'] == $etudiant['id_formation']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($formation['nom_formation']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-        <br><br>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                Enregistrer les modifications
+            </button>
 
-        <label>Formation :</label>
-
-        <select name="id_formation" required>
-            <?php foreach ($formations as $formation): ?>
-                <option value="<?= $formation['id_formation'] ?>"
-                    <?= ($formation['id_formation'] == $etudiant['id_formation']) ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($formation['nom_formation']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <br><br>
-
-        <button type="submit">Modifier</button>
+            <a href="index.php" class="btn-cancel">
+                Annuler
+            </a>
+        </div>
 
     </form>
 
-    <br>
-    <a href="index.php">Retour à la liste</a>
+</div>
 
 </body>
 </html>
+

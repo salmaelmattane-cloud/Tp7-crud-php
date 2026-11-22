@@ -38,58 +38,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ?>
 
+<
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un étudiant</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
+<div class="form-container">
+
     <h1>Ajouter un étudiant</h1>
+    <p class="form-description">
+        Remplissez les informations de l'étudiant.
+    </p>
 
     <form method="POST">
 
-        <label>Nom :</label>
-        <input type="text" name="nom" required>
+        <div class="form-group">
+            <label>Nom</label>
+            <input type="text" name="nom"
+                   placeholder="Nom de l'étudiant" required>
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" name="prenom"
+                   placeholder="Prénom de l'étudiant" required>
+        </div>
 
-        <label>Prénom :</label>
-        <input type="text" name="prenom" required>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email"
+                   placeholder="exemple@gmail.com">
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Formation</label>
+            <select name="id_formation" required>
+                <option value="">Choisir une formation</option>
 
-        <label>Email :</label>
-        <input type="email" name="email">
+                <?php foreach ($formations as $formation): ?>
+                    <option value="<?= $formation['id_formation'] ?>">
+                        <?= htmlspecialchars($formation['nom_formation']) ?>
+                    </option>
+                <?php endforeach; ?>
 
-        <br><br>
+            </select>
+        </div>
 
-        <label>Formation :</label>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                Ajouter l'étudiant
+            </button>
 
-        <select name="id_formation" required>
-
-            <option value="">Choisir une formation</option>
-
-            <?php foreach ($formations as $formation): ?>
-
-                <option value="<?= $formation['id_formation'] ?>">
-                    <?= htmlspecialchars($formation['nom_formation']) ?>
-                </option>
-
-            <?php endforeach; ?>
-
-        </select>
-
-        <br><br>
-
-        <button type="submit">Ajouter</button>
+            <a href="index.php" class="btn-cancel">Annuler</a>
+        </div>
 
     </form>
 
-    <br>
-
-    <a href="index.php">Retour à la liste</a>
+</div>
 
 </body>
 </html>

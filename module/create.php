@@ -36,53 +36,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ?>
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un module</title>
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
+<div class="form-container">
+
     <h1>Ajouter un module</h1>
+    <p class="form-description">
+        Remplissez les informations du nouveau module.
+    </p>
 
     <form method="POST">
 
-        <label>Nom du module :</label>
-        <input type="text" name="nom_module" required>
+        <div class="form-group">
+            <label>Nom du module</label>
+            <input type="text" name="nom_module"
+                   placeholder="Ex : HTML et CSS" required>
+        </div>
 
-        <br><br>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description"
+                      placeholder="Décrivez le module..."></textarea>
+        </div>
 
-        <label>Description :</label>
-        <textarea name="description"></textarea>
+        <div class="form-group">
+            <label>Formation</label>
+            <select name="id_formation" required>
+                <option value="">Choisir une formation</option>
 
-        <br><br>
+                <?php foreach ($formations as $formation): ?>
+                    <option value="<?= $formation['id_formation'] ?>">
+                        <?= htmlspecialchars($formation['nom_formation']) ?>
+                    </option>
+                <?php endforeach; ?>
 
-        <label>Formation :</label>
+            </select>
+        </div>
 
-        <select name="id_formation" required>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">
+                Ajouter le module
+            </button>
 
-            <option value="">Choisir une formation</option>
-
-            <?php foreach ($formations as $formation): ?>
-
-                <option value="<?= $formation['id_formation'] ?>">
-                    <?= htmlspecialchars($formation['nom_formation']) ?>
-                </option>
-
-            <?php endforeach; ?>
-
-        </select>
-
-        <br><br>
-
-        <button type="submit">Ajouter</button>
+            <a href="index.php" class="btn-cancel">Annuler</a>
+        </div>
 
     </form>
 
-    <br>
-
-    <a href="index.php">Retour à la liste</a>
+</div>
 
 </body>
 </html>
